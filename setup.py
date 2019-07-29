@@ -3,6 +3,9 @@ from setuptools import find_packages, setup
 
 from paypal import VERSION
 
+sorl_thumbnail_version = 'sorl-thumbnail>=12.4.1,<12.5'
+easy_thumbnails_version = 'easy-thumbnails==2.5'
+
 setup(
     name='django-oscar-paypal',
     version=VERSION,
@@ -17,17 +20,19 @@ setup(
     packages=find_packages(exclude=['sandbox*', 'tests*']),
     include_package_data=True,
     install_requires=[
-        'django>=1.11,<2.2',
+        'django-oscar>=2.0,<2.1',
+        'django>=1.11,<2.3',
         'requests>=1.0',
-        'django-localflavor'
+        'django-localflavor',
+        sorl_thumbnail_version,
+        easy_thumbnails_version,
     ],
-    extras_require={
-        'oscar': ['django-oscar>=1.6,<1.7']
-    },
     tests_require=[
         'django-webtest==1.9.4',
-        'pytest-cov==2.6.0',
-        'pytest-django==3.4.4',
+        'pytest-cov==2.6.1',
+        'pytest-django==3.4.8',
+        sorl_thumbnail_version,
+        easy_thumbnails_version,
     ],
     # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[

@@ -19,12 +19,10 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': location('db.sqlite'),                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': os.environ.get('DATABASE_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.environ.get('DATABASE_NAME', 'paypal'),
+        'USER': os.environ.get('DATABASE_USER', 'paypal'),
+        'PASSWORD': os.environ.get('DATABASE_USER', 'paypal'),
     }
 }
 ATOMIC_REQUESTS = True
@@ -109,16 +107,12 @@ MIDDLEWARE = (
 INTERNAL_IPS = ('127.0.0.1',)
 
 ROOT_URLCONF = 'urls'
-
-from oscar import OSCAR_MAIN_TEMPLATE_DIR
-
+print(location('templates'))
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             location('templates'),
-            os.path.join(OSCAR_MAIN_TEMPLATE_DIR, 'templates'),
-            OSCAR_MAIN_TEMPLATE_DIR,
         ],
         'OPTIONS': {
             'loaders': [
@@ -135,7 +129,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'oscar.apps.search.context_processors.search_form',
-                'oscar.apps.promotions.context_processors.promotions',
                 'oscar.apps.checkout.context_processors.checkout',
                 'oscar.core.context_processors.metadata',
             ],
@@ -176,7 +169,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers': ['console'],
             'propagate': True,
             'level': 'INFO',
         },
@@ -208,28 +201,58 @@ LOGGING = {
     }
 }
 
-
 INSTALLED_APPS = [
+    # Django apps
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.admin',
-    'django.contrib.flatpages',
     'django.contrib.staticfiles',
-    # External apps
+    'django.contrib.sites',
+    'django.contrib.flatpages',
+    'django.contrib.messages',
+    # Oscar apps
+    'oscar',
+    'oscar.apps.analytics',
+    'sandbox.apps.checkout',
+    'oscar.apps.address',
+    'sandbox.apps.shipping',
+    'oscar.apps.catalogue',
+    'oscar.apps.catalogue.reviews',
+    'oscar.apps.partner',
+    'oscar.apps.basket',
+    'oscar.apps.payment',
+    'oscar.apps.offer',
+    'oscar.apps.order',
+    'oscar.apps.customer',
+    'oscar.apps.search',
+    'oscar.apps.voucher',
+    'oscar.apps.wishlists',
+    'oscar.apps.dashboard',
+    'oscar.apps.dashboard.reports',
+    'oscar.apps.dashboard.users',
+    'oscar.apps.dashboard.orders',
+    'oscar.apps.dashboard.catalogue',
+    'oscar.apps.dashboard.offers',
+    'oscar.apps.dashboard.partners',
+    'oscar.apps.dashboard.pages',
+    'oscar.apps.dashboard.ranges',
+    'oscar.apps.dashboard.reviews',
+    'oscar.apps.dashboard.vouchers',
+    'oscar.apps.dashboard.communications',
+    'oscar.apps.dashboard.shipping',
+    # PayPal apps
+    'paypal',
+    # 3rd-party apps that oscar depends on
+    'widget_tweaks',
+    'haystack',
+    'treebeard',
+    'sorl.thumbnail',
+    'easy_thumbnails',
+    'django_tables2',
     'django_extensions',
     'debug_toolbar',
-    # Apps from oscar
-    'paypal',
-    'widget_tweaks',
 ]
-
-from oscar import get_core_apps
-INSTALLED_APPS = INSTALLED_APPS + get_core_apps([
-    'apps.shipping',
-    'apps.checkout'])
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',
